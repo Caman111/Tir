@@ -9,6 +9,7 @@ const usdToEur = 0.85
 const usdToRub = 90.0
 const eurToRub = usdToRub / usdToEur
 
+
 func readCurrency(prompt string) string {
 	for {
 		fmt.Print(prompt)
