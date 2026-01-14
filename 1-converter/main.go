@@ -9,6 +9,10 @@ const usdToEur = 0.85
 const usdToRub = 90.0
 const eurToRub = usdToRub / usdToEur
 
+var rates = map[string]float64{
+	"USD": 1.0,
+	"EUR": usdToEur,
+	"RUB": usdToRub}
 
 func readCurrency(prompt string) string {
 	for {
@@ -41,32 +45,20 @@ func readAmount() float64 {
 	}
 }
 
-func convert(amount float64, from string, to string) float64 {
-	if from == to {
-		return amount
+func convertRates(rates *map[string]float64, amount float64, from string, to string) float64 {
+
+	rateMap := *rates
+
+	rateFrom, okFrom := rateMap[from]
+	rateTo, okTo := rateMap[to]
+
+	if !okFrom || !okTo {
+		fmt.Println("Ошибка: неверная валюта для конвертации")
+		return 0
 	}
-
-	var inUSD float64
-
-	switch from {
-	case "USD":
-		inUSD = amount
-	case "EUR":
-		inUSD = amount / usdToEur
-	case "RUB":
-		inUSD = amount / usdToRub
-	}
-
-	switch to {
-	case "USD":
-		return inUSD
-	case "EUR":
-		return inUSD * usdToEur
-	case "RUB":
-		return inUSD * usdToRub
-	}
-
-	return 0
+	amountInUSD := amount / rateFrom
+	result := amountInUSD * rateTo
+	return result
 }
 
 func main() {
@@ -82,7 +74,7 @@ func main() {
 
 	to := readCurrency("В какую валюту (USD/EUR/RUB): ")
 
-	result := convert(amount, from, to)
+	result := convertRates(&rates, amount, from, to)
 
 	fmt.Println("----------------------------")
 	fmt.Printf("Результат: %.2f %s → %.2f %s\n", amount, from, result, to)
