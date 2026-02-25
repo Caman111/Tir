@@ -10,6 +10,13 @@ import (
 )
 
 func main() {
+
+	var menu = map[string]func([]float64) float64{
+		"AVG": average,
+		"SUM": sum,
+		"MED": median,
+	}
+
 	reader := bufio.NewReader(os.Stdin)
 
 	fmt.Print("Введите операцию (AVG, SUM, MED): ")
@@ -32,20 +39,13 @@ func main() {
 		numbers = append(numbers, num)
 	}
 
-	var result float64
-	switch operation {
-	case "AVG":
-		result = average(numbers)
-	case "SUM":
-		result = sum(numbers)
-	case "MED":
-		result = median(numbers)
-	default:
+	calkFunc, ok := menu[operation]
+	if !ok {
 		fmt.Println("Неизвестная операция")
 		return
 	}
-
-	fmt.Printf("Результат: %.2f\n", result)
+	result := calkFunc(numbers)
+	fmt.Println("Результат:", result)
 }
 
 func sum(nums []float64) float64 {
